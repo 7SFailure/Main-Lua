@@ -1,0 +1,376 @@
+-- Whitelist System
+
+local player = game.Players.LocalPlayer
+
+if player.Name == "crhazael" then
+    print("Whitelist")
+else
+    player:kick("Not" ..  " Whitelist buy our script https://discord.gg/5NhXSX2CRz")
+end
+
+--GUI
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Code-Craft | The Survival Game [BETA]", HidePremium = false, IntroText = "BETA", SaveConfig = true, ConfigFolder = "OrionTest"})
+
+--Notifications
+   
+   OrionLib:MakeNotification({
+        Name = "Welcome to our BETA!",
+        Content = "",
+        Image = "rbxassetid://16638313894",
+        Time = 20
+    })
+
+    OrionLib:MakeNotification({
+        Name = "EXCUTED SUCCESFULLY",
+        Content = "",
+        Image = "rbxassetid://16638313894",
+        Time = 20
+      })
+
+  --Tab 1
+
+  local Tab = Window:MakeTab({
+	Name = "Player",
+	Icon = "rbxassetid://18823986949",
+	PremiumOnly = false})
+    local Section = Tab:AddSection({
+        Name = "Premium"
+    })
+
+--Speed Button (Speedwalk 34 Max bypass by Chatgpt)
+
+local runService = game:GetService("RunService")
+local userInputService = game:GetService("UserInputService")
+local lplr = game.Players.LocalPlayer
+
+-- Initialize variables for speed control
+local speedVal = 5 -- Default value
+local speedEnabled = false
+local flyEnabled = false
+
+-- Create a function that will be called whenever the slider value changes
+local function onSliderChange(value)
+    speedVal = value
+    print("Speed Value Updated:", speedVal) -- For debugging purposes
+end
+
+-- Define the Heartbeat function to adjust speed
+local function onHeartbeat(dt)
+    if not speedEnabled then 
+        return
+    end
+
+    if flyEnabled then 
+        return
+    end
+
+    if not lplr.Character or not lplr.Character:FindFirstChild("Humanoid") then
+        return
+    end
+
+    local humanoid = lplr.Character.Humanoid
+    local humanoidRootPart = lplr.Character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then
+        return
+    end
+
+    local moveDirection = humanoid.MoveDirection
+    local factor = speedVal - humanoid.WalkSpeed
+    local multMD = (moveDirection * dt) * factor
+
+    lplr.Character:TranslateBy(multMD)
+end
+
+-- Function to toggle speed
+local function setSpeedEnabled(enabled)
+    speedEnabled = enabled
+    print("Speed Enabled toggled to:", speedEnabled) -- For debugging purposes
+end
+
+-- Function to toggle fly (if you have fly functionality)
+local function setFlyEnabled(enabled)
+    flyEnabled = enabled
+end
+
+-- Connect the onHeartbeat function to the Heartbeat event
+runService.Heartbeat:Connect(onHeartbeat)
+
+-- Add the slider to your GUI
+Tab:AddSlider({
+    Name = "Speed Slider",
+    Min = 0,
+    Max = 34, -- Maximum value set to 34
+    Default = speedVal,
+    Color = Color3.fromRGB(255, 255, 255),
+    Increment = 1,
+    ValueName = "",
+    Callback = onSliderChange -- Link the slider change to update the speedVal
+})
+
+-- Keybind functionality
+local function onKeyPress(input)
+    if input.KeyCode == Enum.KeyCode.X then -- Changed to `Enum.KeyCode.X`
+        speedEnabled = not speedEnabled
+        print("Speed Enabled toggled to:", speedEnabled) -- For debugging purposes
+    end
+end
+
+-- Connect the keypress function to the InputBegan event
+userInputService.InputBegan:Connect(onKeyPress)
+
+-- Example usage:
+-- To enable speed:
+-- setSpeedEnabled(true)
+
+-- To disable speed:
+-- setSpeedEnabled(false)
+
+-- To enable fly (if you have fly functionality):
+-- setFlyEnabled(true)
+
+-- To disable fly:
+-- setFlyEnabled(false)
+
+Tab:AddLabel("Press X to enable, !If your invetory is full it wont work!")
+
+-- Section
+
+local Section = Tab:AddSection({
+	Name = "Main"
+})
+
+-- Button 2 (infinity Stamina)
+
+Tab:AddButton({
+	Name = "Infinity Stamina",
+	Callback = function()
+      		game:GetService("Players").LocalPlayer:SetAttribute("advanced_cosmetics", true)
+game:GetService("Players").LocalPlayer:SetAttribute("advanced_kingdom_customization", true)
+
+while true do
+   task.wait()
+   game:GetService("Players").LocalPlayer:SetAttribute("stamina", 1)
+end
+  	end    
+})
+
+-- Button 3
+
+Tab:AddButton({
+	Name = "Noclip",
+	Callback = function()
+        local NoclipConnection = nil
+        local Clip = nil
+        local floatName = "SomeFloatName" -- Define floatName if you have specific parts to exclude from noclip
+        
+        -- Function to enable noclip
+        function noclip()
+            Clip = false
+            local function Nocl()
+                if Clip == false and game.Players.LocalPlayer.Character ~= nil then
+                    for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                        if v:IsA('BasePart') and v.CanCollide and v.Name ~= floatName then
+                            v.CanCollide = false
+                        end
+                    end
+                end
+                wait(0.21) -- Basic optimization
+            end
+            NoclipConnection = game:GetService('RunService').Stepped:Connect(Nocl)
+        end
+        
+        -- Function to disable noclip
+        function clip()
+            if NoclipConnection then NoclipConnection:Disconnect() end
+            Clip = true
+        end
+        
+        -- Define a variable for the toggle state
+        local toggleEnabled = false
+        
+        -- Toggle callback function
+        local function ToggleCallback(value)
+            toggleEnabled = value
+            if toggleEnabled then
+                noclip()
+            else
+                clip()
+            end
+        end
+        
+        -- Assuming Tab is a predefined UI element that handles the toggle
+        Tab:AddToggle({
+            Name = "Noclip Toggle",
+            Default = false,
+            Callback = ToggleCallback
+        })
+        
+        -- Initialization
+        if toggleEnabled then
+            noclip()
+        else
+            clip()
+        end
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+-- Section
+
+local Section = Tab:AddSection({
+	Name = "Automatic"
+})
+
+--Button 4 (Toggle)
+
+-- Define a variable for controlling the fast pickup
+local fastPickupEnabled = false
+
+-- Function to handle fast pickup
+local function onFastPickupToggle(value)
+    fastPickupEnabled = value
+    if fastPickupEnabled then
+        task.spawn(function()
+            repeat
+                task.wait(0.05)
+
+                -- Ensure 'entity' and its properties are valid before using them
+                if not (entity and entity.character and entity.character.HumanoidRootPart) then
+                    print("Error: entity or its properties are not properly defined.")
+                    return
+                end
+
+                -- Ensure the 'isAlive' property is accessed only if 'entity' is valid
+                if not entity.isAlive then
+                    return
+                end
+
+                local selfPos = entity.character.HumanoidRootPart.Position
+                for _, v in next, collectionService:GetTagged("DROPPED_ITEM") do
+                    local dist = (v.Position - selfPos).Magnitude
+                    if dist <= 5 then
+                        tsg.PickupRemote:FireServer(v)
+                    end
+                end
+            until not fastPickupEnabled
+        end)
+    end
+end
+
+-- Add a toggle to the tab for fast pickup
+Tab:AddToggle({
+    Name = "Fast Pickup",
+    Default = false,
+    Callback = function(value)
+        -- Call the function to handle fast pickup based on the toggle state
+        onFastPickupToggle(value)
+        print("Fast Pickup is", value and "enabled" or "disabled")
+    end
+})
+
+
+-- Second Tab
+
+local Tab = Window:MakeTab({
+	Name = "Visual",
+	Icon = "rbxassetid://18828637011",
+	PremiumOnly = false
+})
+
+-- Button One
+
+Tab:AddButton({
+	Name = "ESP",
+	Callback = function()
+      	-- Configuration
+local r = math.random(0, 255)
+local g = math.random(0, 255) 
+local b = math.random(0, 255)
+
+local highlightColor = Color3.fromRGB(r, g, b)
+
+-- Functions
+local function getPlayers()
+  return game:GetService("Players"):GetPlayers()
+end
+
+local function highlightPlayer(player)
+    local character = player.Character
+    if character then
+      local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+      if humanoidRootPart then
+        local highlight = Instance.new("BoxHandleAdornment", humanoidRootPart)
+        highlight.Color3 = player.TeamColor.Color -- Use the player's team color
+        highlight.Adornee = humanoidRootPart
+        highlight.AlwaysOnTop = true
+        highlight.ZIndex = 1 
+        highlight.Transparency = 0.5
+        
+        local billboardGui = Instance.new("BillboardGui")
+        billboardGui.Adornee = humanoidRootPart
+        billboardGui.Size = UDim2.new(0, 100, 0, 50)
+        billboardGui.StudsOffset = Vector3.new(0, 3, 0) -- Position it a bit above the player
+        billboardGui.AlwaysOnTop = true -- Make it visible through walls
+        billboardGui.Parent = character -- Parent to the character, not the HumanoidRootPart
+
+        local textBox = Instance.new("TextBox", billboardGui)
+        textBox.Text = player.Name
+        textBox.BackgroundTransparency = 1
+        textBox.Size = UDim2.new(1, 0, 1, 0) -- Relative to the BillboardGui
+        textBox.Position = UDim2.new(0, 0, 0, 0) -- Relative to the BillboardGui
+        textBox.TextColor3 = player.TeamColor.Color -- Use the player's team color for the text
+        textBox.TextSize = 14
+        textBox.Font = Enum.Font.SourceSansBold
+        textBox.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+        textBox.TextStrokeTransparency = 0.15
+      end
+    end
+end
+
+local function removeHighlights()
+  for _, player in ipairs(getPlayers()) do
+    local character = player.Character
+    if character then
+      for _, obj in ipairs(character:GetChildren()) do
+        if obj:IsA("BoxHandleAdornment") or obj:IsA("BillboardGui") then
+          obj:Destroy()
+        end
+      end
+    end
+  end
+end
+
+local function highlightPlayers()
+    removeHighlights()
+    
+    local localPlayer = game:GetService("Players").LocalPlayer
+    for _, player in ipairs(getPlayers()) do
+      if player ~= localPlayer then
+        highlightPlayer(player)
+      end
+    end
+  end
+
+-- Main Loop
+while true do
+  highlightPlayers()
+  
+  r = math.random(0, 255)
+  g = math.random(0, 255)
+  b = math.random(0, 255)
+
+  highlightColor = Color3.fromRGB(r, g, b)
+  
+  wait(2)
+end	
+  	end    
+})
+
+
+OrionLib:Init()
